@@ -22,73 +22,40 @@ class LFUCache(BaseCaching):
         """Initiliaze"""
         super().__init__()
         self.cache_data = OrderedDict(self.cache_data)
-        self.frequency = Counter()
-
-    def print_cache(self):
-        """Print the cache content"""
-        print("Current cache:")
-        for key, (item, _) in self.cache_data.items():
-            print("{}: {}".format(key, item))
+        self.freq = {}
 
     def put(self, key, item):
         """Add an item in the cache"""
-        # items_to_discard = []
         if key and item:
             if key in self.cache_data:
                 # Update frequency for existing key
-                _, freq = self.cache_data[key]
-                self.frequency[key] += 1
-                self.cache_data[key] = (item, freq + 1)
+                self.frequency_update(self, key)
+                self.cache_data[key] = item
                 return
-
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+            if len(self.cache_data) >= self.MAX_ITEMS:
                 # get the lowest freqeuncy from the frequency dict
-                min_freq = min(self.frequency.values())
-                # get a list of keys with frequency equal to min
                 items_to_discard = [
-                    k for k, v in self.frequency.items() if v == min_freq
+                    (self.freq[key], key) for key in self.freq.keys()
                 ]
-                # or
-                # for k, v in self.frequency.items():
-                #     if v == min_freq:
-                #         items_to_discard.append(k)
-
-                if len(items_to_discard) > 1:
-                    # implement LRUCache
-                    # if more than 1 item to discard, get the mimimu
-                    last_key = min(
-                        items_to_discard, key=lambda k: self.frequency[k]
-                    )
-                    del self.cache_data[last_key]
-                    del self.frequency[last_key]
-                    print("DISCARD: {}".format(last_key))
-                    # Insert the new key-value pair
-                    self.cache_data[key] = (item, 1)
-                    self.cache_data.move_to_end(key)
-                    self.frequency[key] = 1
-                    return
-
-                last_key = items_to_discard[0]
-                del self.cache_data[last_key]
-                del self.frequency[last_key]
-                print("DISCARD: {}".format(last_key))
-                # Insert the new key-value pair
-                self.cache_data[key] = (item, 1)
-                self.frequency[key] = 1
-                return
-
-            self.cache_data[key] = (item, 1)
-            self.frequency[key] = 1
+                del_key = sorted(items_to_discard)[0][1]
+                del self.cache_data[del_key]
+                del self.freq[del_key]
+                print("DISCARD: {}".format(del_key))
+                # add new item
+                self.cache_data[key] = item
+                self.freq[key] = 1
+            self.cache_data[key] = item
+            self.freq[key] = 1
 
     def get(self, key):
         """Get an item by key"""
         if key in self.cache_data:
-            # self.cache_data.move_to_end(key)
-            # extract the value -> tuple(value, int(freq))
-            item, freq = self.cache_data[key]
             # increase the frequency for that key
-            self.cache_data[key] = (item, freq + 1)
-            # store the key and its frequency in frequency dict
-            self.frequency[key] += 1
-            return item
+            self.frequency_update(self, key)
+            return self.cache_data.get(key)
         return None
+
+    @staticmethod
+    def frequency_update(self, key):
+        """Update the frequency dict"""
+        self.freq[key] += 1
