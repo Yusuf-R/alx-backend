@@ -32,6 +32,7 @@ class LFUCache(BaseCaching):
 
     def put(self, key, item):  # sourcery skip: extract-method, last-if-guard
         """Add an item in the cache"""
+        # items_to_discard = []
         if key and item:
             if key in self.cache_data:
                 # Update frequency for existing key
@@ -41,14 +42,24 @@ class LFUCache(BaseCaching):
                 return
 
             if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
+                # get the lowest freqeuncy from the frequency dict
                 min_freq = min(self.frequency.values())
+                # get a list of keys with frequency equal to min
                 items_to_discard = [
                     k for k, v in self.frequency.items() if v == min_freq
                 ]
-                last_key = min(
-                    items_to_discard, key=lambda k: self.frequency[k]
-                )
+                # or
+                # for k, v in self.frequency.items():
+                #     if v == min_freq:
+                #         items_to_discard.append(k)
 
+                if len(items_to_discard) > 1:
+                    # if more than 1 item to discard, get the mimimu
+                    last_key = min(
+                        items_to_discard, key=lambda k: self.frequency[k]
+                    )
+                else:
+                    last_key = items_to_discard[0]
                 del self.cache_data[last_key]
                 del self.frequency[last_key]
                 print("DISCARD: {}".format(last_key))
