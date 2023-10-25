@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Caching System """
 
-BaseCaching = __import__('0-base_cache').BaseCaching
+BaseCaching = __import__('base_caching').BaseCaching
 
 # Create a class BasicCache that inherits from BaseCaching
 # You must use self.cache_data from the parent class BaseCaching
@@ -14,7 +14,7 @@ BaseCaching = __import__('0-base_cache').BaseCaching
 # If key is None or if the key doesn’t exist in self.cache_data, return None.
 
 
-class BaiscCache(BaseCaching):
+class BasicCache(BaseCaching):
     """ Caching System """
 
     def __init__(self):
