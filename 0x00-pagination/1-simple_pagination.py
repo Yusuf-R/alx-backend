@@ -12,6 +12,7 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """Instantiation"""
         self.__dataset = None
 
     def dataset(self) -> List[List]:  # sourcery skip: identity-comprehension
@@ -51,7 +52,6 @@ class Server:
 
     @staticmethod
     def index_range(page: int, page_size: int) -> tuple[int, int]:
-        # sourcery skip: instance-method-first-arg-name
         """
         Return a tuple of size two containing the start and end
         indexes to paginate a dataset.
@@ -67,4 +67,3 @@ class Server:
         start_index: int = (page - 1) * page_size
         end_index: int = start_index + page_size
         return ((start_index, end_index))
-
