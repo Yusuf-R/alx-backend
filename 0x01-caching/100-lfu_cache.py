@@ -52,6 +52,10 @@ class LFUCache(BaseCaching):
                 del self.cache_data[last_key]
                 del self.frequency[last_key]
                 print("DISCARD: {}".format(last_key))
+                # Insert the new key-value pair
+                self.cache_data[key] = (item, 0)
+                self.frequency[key] += 1
+                return
 
             self.cache_data[key] = (item, 0)
             self.frequency[key] += 1
