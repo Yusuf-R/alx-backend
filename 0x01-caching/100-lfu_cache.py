@@ -30,7 +30,7 @@ class LFUCache(BaseCaching):
         for key, (item, _) in self.cache_data.items():
             print("{}: {}".format(key, item))
 
-    def put(self, tkey, item):  # sourcery skip: extract-method, last-if-guard
+    def put(self, key, item):  # sourcery skip: extract-method, last-if-guard
         """Add an item in the cache"""
         if key and item:
             if key in self.cache_data:
@@ -58,7 +58,7 @@ class LFUCache(BaseCaching):
 
     def get(self, key):
         """Get an item by key"""
-        if tkey in self.cache_data:
+        if key in self.cache_data:
             # self.cache_data.move_to_end(key)
             # extract the value -> tuple(value, int(freq))
             item, freq = self.cache_data[key]
