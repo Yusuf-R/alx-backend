@@ -30,7 +30,7 @@ class LFUCache(BaseCaching):
         for key, (item, _) in self.cache_data.items():
             print("{}: {}".format(key, item))
 
-    def put(self, key, item):  # sourcery skip: extract-method, last-if-guard
+    def put(self, key, item):
         """Add an item in the cache"""
         # items_to_discard = []
         if key and item:
@@ -54,12 +54,21 @@ class LFUCache(BaseCaching):
                 #         items_to_discard.append(k)
 
                 if len(items_to_discard) > 1:
+                    # implement LRUCache
                     # if more than 1 item to discard, get the mimimu
                     last_key = min(
                         items_to_discard, key=lambda k: self.frequency[k]
                     )
-                else:
-                    last_key = items_to_discard[0]
+                    del self.cache_data[last_key]
+                    del self.frequency[last_key]
+                    print("DISCARD: {}".format(last_key))
+                    # Insert the new key-value pair
+                    self.cache_data[key] = (item, 1)
+                    self.cache_data.move_to_end(key)
+                    self.frequency[key] = 1
+                    return
+
+                last_key = items_to_discard[0]
                 del self.cache_data[last_key]
                 del self.frequency[last_key]
                 print("DISCARD: {}".format(last_key))
