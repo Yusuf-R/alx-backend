@@ -33,6 +33,12 @@ class LFUCache(BaseCaching):
     def put(self, key, item):  # sourcery skip: extract-method, last-if-guard
         """Add an item in the cache"""
         if key and item:
+            # check if key already exist in the dictionary
+            if key in self.cache_data:
+                # check if the number of item is higher than MAX_ITEMS
+                self.cache_data[key] = (item, 0)
+                self.frequency[key] += 1
+                return
             if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
                 # find the mimimum frequency in the cache
                 min_freq = min(self.frequency.values())
