@@ -6,7 +6,7 @@ from collections import OrderedDict
 BaseCaching = __import__('base_caching').BaseCaching
 
 
-# Create a class LIFOCache that inherits from BaseCaching and is a caching system:
+# Create a class LIFOCache that inherits from BaseCaching system:
 
 # You must use self.cache_data - dictionary from the base BaseCaching
 # You can overload def __init__(self)
