@@ -50,26 +50,51 @@ class Server:
                 Hyper index
         """
         data = []
+        # make sure page_size is an integer and greater than 0
         assert isinstance(page_size, int) and page_size > 0
+        # make sure index is an integer and also permit if index is None
         assert isinstance(index, int) or index is None
+        # make sure index is within >= 0 < len of dataset
         assert 0 <= index < len(self.dataset())
 
+        # set index to 0 if none was provided
         if index is None:
             index = 0
-        nxt_idx = index
+        # make a copy of this index since we will modify
+        # but keep original for data information page
+        curr_idx = index
+
+        # get all the indexed_dataset, it is a dictoinary {key:[data]}
         indexed_dataset = self.indexed_dataset()
 
+        # while the page size is greater than 0
         while page_size > 0:
-            data_content = indexed_dataset.get(nxt_idx)
+            # get the data at the current index
+            data_content = indexed_dataset.get(curr_idx)
+
+            # if the data is not None
             if data_content is not None:
+
+                # store this result in the data list object
                 data.append(data_content)
+
+                # decreament size
                 page_size -= 1
-            nxt_idx += 1
-            if nxt_idx >= len(indexed_dataset):
+
+            # if data_content is None:
+            # we move to the next index by adding 1 to our curr
+            curr_idx += 1
+
+            # curr idx is > we break out
+            if curr_idx >= len(indexed_dataset):
                 break
+
+            # return the proper details of the query
+            # picture next index as the index of our curr after
+            # existing the loop
         return {
             'index': index,
-            'next_index': nxt_idx,
+            'next_index': curr_idx,
             'page_size': len(data),
             'data': data
             }
