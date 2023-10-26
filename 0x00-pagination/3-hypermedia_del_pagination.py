@@ -49,34 +49,27 @@ class Server:
             Return:
                 Hyper index
         """
-        result_dataset = []
-        # get the index data
-        indexed_data = self.indexed_dataset()
-        # extract all the index from the index dictionary
-        keys_list = list(indexed_data.keys())
-        # ensure index is within range in the index_data
-        assert index + page_size <= len(keys_list)
-        assert index < len(keys_list)
+        data = []
+        assert isinstance(page_size, int) and page_size > 0
+        assert isinstance(index, int) or index is None
+        assert 0 <= index < len(self.dataset())
 
-        if index not in indexed_data:
-            start_index = keys_list[index]
-        else:
-            start_index = index
+        if index is None:
+            index = 0
+        nxt_idx = index
+        indexed_dataset = self.indexed_dataset()
 
-        for i in range(start_index, start_index + page_size):
-            if i not in indexed_data:
-                result_dataset.append(indexed_data[keys_list[i]])
-            else:
-                result_dataset.append(indexed_data[i])
-
-        next_index: int = index + page_size
-
-        if index not in keys_list:
-            next_index = keys_list[next_index]
-
+        while page_size > 0:
+            data_content = indexed_dataset.get(nxt_idx)
+            if data_content is not None:
+                data.append(data_content)
+                page_size -= 1
+            nxt_idx += 1
+            if nxt_idx >= len(indexed_dataset):
+                break
         return {
             'index': index,
-            'next_index': next_index,
-            'page_size': len(result_dataset),
-            'data': result_dataset
-        }
+            'next_index': nxt_idx,
+            'page_size': len(data),
+            'data': data
+            }
