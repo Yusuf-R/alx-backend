@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-""" Hypermedia pagination """
+""" Pagination implementation"""
+
 import csv
-from math import ceil
+import math
 from typing import List, Tuple, Dict
 
 
@@ -11,9 +12,10 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """Instantiation"""
         self.__dataset = None
 
-    def dataset(self) -> List[List]:
+    def dataset(self) -> List[List]:  # sourcery skip: identity-comprehension
         """Cached dataset
         """
         if self.__dataset is None:
@@ -26,79 +28,69 @@ class Server:
 
     def get_page(self, page: int = 1, page_size: int = 10) -> List[List]:
         """
-            Get the page
+        Return the appropriate page of the dataset based on the
+        given page and page_size.
 
-            Args:
-                page: Current page
-                page_size: Total size of the page
+        Args:
+          page (int): The page number to retrieve (default is 1).
+          page_size (int): The number of items per page (default is 10).
 
-            Return:
-                List of the pagination done
+        Returns:
+          List[List]: list of rows representing page of the dataset.
+          If the input arguments are out of range for the dataset, an empty
+          list should be returned.
         """
+        # assert to verify both arguments are integers greater than 0
         assert isinstance(page, int) and page > 0
         assert isinstance(page_size, int) and page_size > 0
+        # If the input arguments are out of range for the dataset
+        try:
+            start_index, end_index = self.index_range(page, page_size)
+            return self.dataset()[start_index:end_index]
+        except IndexError:
+            return []
 
-        range: Tuple = index_range(page, page_size)
-        pagination: List = self.dataset()
+    @staticmethod
+    def index_range(page: int, page_size: int) -> Tuple[int, int]:
+        """
+        Return a tuple of size two containing the start and end
+        indexes to paginate a dataset.
 
-        return (pagination[range[0]:range[1]])
+        Args:
+          page (int): the current page number.
+          page_size (int): the number of items per page.
+
+        Returns:
+          tuple[int, int]: a tuple containing the start and end
+          indexes to paginate the dataset.
+        """
+        start_index = (page - 1) * page_size
+        end_index = start_index + page_size
+        return (start_index, end_index)
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
+        """ 
+        Implement a get_hyper method that takes the same arguments
+        as get_page and returns a dictionary with key-value pairs:
+        Args:
+          page (int): The page number to retrieve (default is 1).
+          page_size (int): The number of items per page (default is 10).
+
+        Returns:
+          Dict: a dictionary containing the following key-value pairs:
+          page_size: the length of the returned dataset page
+          page: the current page number
+          data: the dataset page (equivalent to return from previous task)
+          next_page: num of the next page, None if no next page
+          prev_page: num of the previous page, None if no previous page
+          total_pages: total number of pages in the dataset as an integer
         """
-            Range of the page
-
-            Args:
-                page: Current page
-                page_size: Total size of the page
-
-            Return:
-                Dict with different arguments
-                page_size: the length of the returned dataset page
-                page: the current page number
-                data: the dataset page
-                (equivalent to return from previous task)
-                next_page: number of the next page, None if no next page
-                prev_page: number of the previous page,
-                None if no previous page
-                total_pages: the total number of pages
-                in the dataset as an integer
-        """
-
-        data = []
-        try:
-            data = self.get_page(page, page_size)
-        except AssertionError:
-            return {}
-
-        dataset: List = self.dataset()
-        totalpag: int = len(dataset) if dataset else 0
-        totalpag = ceil(totalpag / page_size)
-        prevpag: int = (page - 1) if (page - 1) >= 1 else None
-        nextpag: int = (page + 1) if (page + 1) <= totalpag else None
-
-        hypermedia: Dict = {
-            'page_size': page_size,
-            'page': page,
-            'data': data,
-            'next_page': nextpag,
-            'prev_page': prevpag,
-            'total_pages': totalpag,
+        total_pages = math.ceil(len(self.dataset()) / page_size)
+        return {
+            "page_size": page_size,
+            "page": page,
+            "data": self.get_page(page, page_size),
+            "next_page": page + 1 if page + 1 <= total_pages else None,
+            "prev_page": page - 1 if page > 1 else None,
+            "total_pages": total_pages,
         }
-
-        return hypermedia
-
-
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """
-    Range of the page
-    Args:
-        page: Current page
-        page_size: Total size of the page
-    Return:
-        tuple with the range start and end size page
-    """
-
-    final_size: int = page * page_size
-    start_size: int = final_size - page_size
-
-    return (start_size, final_size)
