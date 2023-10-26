@@ -55,7 +55,7 @@ class Server:
         # extract all the index from the index dictionary
         keys_list = list(indexed_data.keys())
         # ensure index is within range in the index_data
-        assert index + page_size < len(keys_list)
+        assert index + page_size <= len(keys_list)
         assert index < len(keys_list)
 
         if index not in indexed_data:
