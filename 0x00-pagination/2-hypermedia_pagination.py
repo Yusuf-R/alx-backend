@@ -69,7 +69,7 @@ class Server:
         return (start_index, end_index)
 
     def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict:
-        """ 
+        """
         Implement a get_hyper method that takes the same arguments
         as get_page and returns a dictionary with key-value pairs:
         Args:
