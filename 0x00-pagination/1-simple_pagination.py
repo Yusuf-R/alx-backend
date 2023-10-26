@@ -3,7 +3,7 @@
 
 import csv
 import math
-from typing import List
+from typing import List, Tuple
 
 
 class Server:
@@ -51,7 +51,7 @@ class Server:
             return []
 
     @staticmethod
-    def index_range(page: int, page_size: int) -> tuple[int, int]:
+    def index_range(page: int, page_size: int) -> Tuple[int, int]:
         """
         Return a tuple of size two containing the start and end
         indexes to paginate a dataset.
@@ -64,6 +64,6 @@ class Server:
           tuple[int, int]: a tuple containing the start and end
           indexes to paginate the dataset.
         """
-        start_index: int = (page - 1) * page_size
-        end_index: int = start_index + page_size
-        return ((start_index, end_index))
+        start_index = (page - 1) * page_size
+        end_index = start_index + page_size
+        return (start_index, end_index)
