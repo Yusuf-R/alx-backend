@@ -86,7 +86,7 @@ def index() -> str:
 
 
 @babel.localeselector
-def get_locale() -> str:
+def get_locale():
     """ get_locale function """
     # check if 'locale' parameter is in the request args
     if 'locale' in request.args:
@@ -99,7 +99,7 @@ def get_locale() -> str:
 # babel.init_app(app, locale_selector=get_locale)
 
 
-def get_user() -> dict or None:
+def get_user():
     """
     Returns a user dictionary if the ID can be found
     in the users dictionary and login_as was passed,
@@ -107,19 +107,17 @@ def get_user() -> dict or None:
 
     :return: A dictionary containing user data or None.
     """
-    # ascertain if login_as was passed
-    user_id = request.args.get('login_as')
+    try:
+        user_id = request.args.get('login_as')
     # if so, get the data from the users dictionary
-    if user_id and int(user_id) in users:
         return users[int(user_id)]
-    # otherwise, return None
-    return None
+    except Exception:
+        return None
 
 
 @app.before_request
 def before_request():
-    """ before_request function """
-    # set flask.g.user by calling get_user
+    """ set flask.g.user by calling get_user """
     g.user = get_user()
 
 
