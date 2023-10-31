@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-""" Basic Flask app """
+""" Basic Flask app with Babel"""
 
 from flask import Flask, render_template, request, g
 from flask_babel import Babel
-import flask
 
 # ==============Task 0================================
 # First you will setup a basic Flask app in 0-app.py.
@@ -80,15 +79,14 @@ babel = Babel(app)
 app.config.from_object(Config)
 
 
-@app.route('/', methods=['GET'])
-def index():
+@app.route('/', methods=['GET'], strict_slashes=False)
+def index() -> str:
     """ Index route """
-
     return render_template('5-index.html')
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     """ get_locale function """
     # check if 'locale' parameter is in the request args
     if 'locale' in request.args:
@@ -101,15 +99,19 @@ def get_locale():
 # babel.init_app(app, locale_selector=get_locale)
 
 
-def get_user():
-    """ get_user function """
+def get_user() -> dict or None:
+    """
+    Returns a user dictionary if the ID can be found
+    in the users dictionary and login_as was passed,
+    git aotherwise returns None.
+
+    :return: A dictionary containing user data or None.
+    """
     # ascertain if login_as was passed
     user_id = request.args.get('login_as')
     # if so, get the data from the users dictionary
-    if user_id:
-        data = users.get(int(user_id))
-        print(data)
-        return data
+    if user_id and int(user_id) in users:
+        return users[int(user_id)]
     # otherwise, return None
     return None
 
