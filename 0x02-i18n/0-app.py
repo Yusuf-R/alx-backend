@@ -2,7 +2,6 @@
 """ Basic Flask app """
 
 from flask import Flask, render_template
-from os import getenv
 
 # First you will setup a basic Flask app in 0-app.py.
 # Create a single / route and an index.html template
@@ -13,7 +12,7 @@ from os import getenv
 app = Flask(__name__, static_url_path='')
 
 
-@app.route('/', methods=['GET'], strict_slashes=False)
+@app.route('/', methods=['GET'])
 def index():
     """ Index route """
     return render_template('0-index.html')
@@ -21,6 +20,4 @@ def index():
 
 if __name__ == '__main__':
     """ Main Function """
-    host = getenv('APT_HOST', '0.0.0.0')
-    port = getenv('API_PORT', '5000')
-    app.run(host=host, port=port)
+    app.run(host='0.0.0.0', port=5000, debug=True)
