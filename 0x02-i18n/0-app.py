@@ -10,7 +10,7 @@ from os import getenv
 # and “Hello world” as header (<h1>).
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 
 @app.route('/', methods=['GET'], strict_slashes=False)
@@ -23,4 +23,4 @@ if __name__ == '__main__':
     """ Main Function """
     host = getenv('APT_HOST', '0.0.0.0')
     port = getenv('API_PORT', '5000')
-    app.run(host=host, port=port, debug=True)
+    app.run(host=host, port=port)
