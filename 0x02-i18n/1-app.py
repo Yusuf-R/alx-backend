@@ -29,7 +29,7 @@ class Config:
     BABEL_DEFAULT_TIMEZONE = 'UTC'
 
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
 babel = Babel(app)
 
 app.config.from_object(Config)
@@ -38,7 +38,7 @@ app.config.from_object(Config)
 @app.route('/', methods=['GET'])
 def index():
     """ Index route """
-    return render_template('0-index.html')
+    return render_template('1-index.html')
 
 
 if __name__ == '__main__':

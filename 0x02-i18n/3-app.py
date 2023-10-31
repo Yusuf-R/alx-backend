@@ -27,6 +27,11 @@ from flask_babel import Babel
 # with our supported languages.
 # ====================================================
 
+# ==============Task 3================================
+# Use the _ or gettext function to parametrize your templates.
+# Use the message IDs home_title and home_header.
+# ====================================================
+
 
 class Config:
     """ Config class """
@@ -44,7 +49,7 @@ app.config.from_object(Config)
 @app.route('/', methods=['GET'])
 def index():
     """ Index route """
-    return render_template('2-index.html')
+    return render_template('3-index.html')
 
 
 @babel.localeselector
