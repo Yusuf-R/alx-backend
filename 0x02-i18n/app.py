@@ -10,7 +10,7 @@ from datetime import datetime
 users = {
     1: {"name": "Balou", "locale": "fr", "timezone": "Europe/Paris"},
     2: {"name": "Beyonce", "locale": "en", "timezone": "US/Central"},
-    3: {"name": "Spock", "locale": "kg", "timezone": "Vulcan"},
+    3: {"name": "Spock", "locale": "kg", "timezone": "Pacific/Guadalcanal"},
     4: {"name": "Teletubby", "locale": None, "timezone": "Europe/London"},
 }
 
@@ -38,6 +38,7 @@ def index() -> str:
     time_zone_info = get_timezone()
     localize_ct_time = pytz.utc.localize(ct_time)
     time_zone = localize_ct_time.astimezone(pytz.timezone(time_zone_info))
+    time_zone = time_zone.strftime("%b %d, %Y, %I:%M:%S %p")
     return render_template('index.html', time_zone=time_zone)
 
 
