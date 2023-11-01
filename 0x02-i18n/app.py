@@ -2,7 +2,7 @@
 """ Basic Flask app with Babel"""
 
 from flask import Flask, render_template, request, g
-from flask_babel import Babel
+from flask_babel import Babel, format_datetime, timezone
 import pytz
 from datetime import datetime
 
@@ -31,7 +31,14 @@ app.config.from_object(Config)
 @app.route('/', methods=['GET'], strict_slashes=False)
 def index() -> str:
     """ Index route """
-    return render_template('index.html')
+    # display the current time on the home page
+    # in the default format. For example:
+    # Jan 21, 2020, 5:55:39 AM or 21 janv. 2020 à 05:56:28
+    ct_time = datetime.now()
+    time_zone_info = get_timezone()
+    localize_ct_time = pytz.utc.localize(ct_time)
+    time_zone = localize_ct_time.astimezone(pytz.timezone(time_zone_info))
+    return render_template('index.html', time_zone=time_zone)
 
 
 @babel.localeselector
@@ -82,12 +89,6 @@ def get_user():
 def before_request():
     """ set flask.g.user by calling get_user """
     g.user = get_user()
-    # display the current time on the home page
-    # in the default format. For example:
-    # Jan 21, 2020, 5:55:39 AM or 21 janv. 2020 à 05:56:28
-    curr_utc = pytz.utc.localize(datetime.utcnow())
-    time_zone = curr_utc.astimezone(pytz.timezone(get_timezone()))
-    print(time_zone)
 
 
 @babel.timezoneselector
@@ -99,7 +100,7 @@ def get_timezone():
         req_tmz = request.args.get('timezone')
         # check if the requested timezone is in the supported timezones
         if req_tmz in pytz.all_timezones:
-            return req_tmz
+            return (req_tmz)
         else:
             raise pytz.exceptions.UnknownTimeZoneError
     # Implement timezone from user settings
@@ -111,9 +112,9 @@ def get_timezone():
             lc_tmz = users[int(user_id)].get('timezone')
             print(lc_tmz)
             if lc_tmz in pytz.all_timezones:
-                return lc_tmz
-        else:
-            raise pytz.exceptions.UnknownTimeZoneError
+                return (lc_tmz)
+            else:
+                raise pytz.exceptions.UnknownTimeZoneError
     # Implement default behavior
     return app.config['BABEL_DEFAULT_TIMEZONE']
 
