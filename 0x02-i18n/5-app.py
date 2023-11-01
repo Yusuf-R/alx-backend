@@ -94,8 +94,9 @@ def get_locale():
         # check if the requested locale is in the supported languages
         if requested_locale in app.config['LANGUAGES']:
             return requested_locale
-    # if not, use the default behavior
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    else:
+        # if not, use the default behavior
+        return request.accept_languages.best_match(app.config['LANGUAGES'])
 # babel.init_app(app, locale_selector=get_locale)
 
 
