@@ -27,18 +27,20 @@ class FIFOCache(BaseCaching):
         """ Initiliaze
         """
         super().__init__()
+        self.cache_data = OrderedDict(self.cache_data)
 
     def put(self, key, item):
         """ Add an item in the cache
         """
-        self.cache_data = OrderedDict(self.cache_data)
         if key and item:
-            # check if the number of item is higher than MAX_ITEMS
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                # discard the last item put in cache (LIFO algorithm)
-                last_key, _ = self.cache_data.popitem(last=False)
-                print("DISCARD: {}".format(last_key))
             self.cache_data[key] = item
+            # check if the number of item is higher than MAX_ITEMS
+            if len(self.cache_data) > BaseCaching.MAX_ITEMS:
+                # discard the first item put in cache (FIFO algorithm)
+                first_key, _ = self.cache_data.popitem(last=False)
+                print("DISCARD: {}".format(first_key))
+                return
+            return
 
     def get(self, key):  # sourcery skip: assign-if-exp, reintroduce-else
         """ Get an item by key
