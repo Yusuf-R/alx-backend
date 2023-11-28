@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
+import { createClient } from 'redis';
+
 const util = require('util');
-const { createClient } = require('redis');
 
 const client = createClient();
 
