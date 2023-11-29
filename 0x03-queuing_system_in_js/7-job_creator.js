@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-console */
 const jobs = [
   {
@@ -56,25 +57,21 @@ jobs.forEach((jobData) => {
   job.save((err) => {
     if (!err) {
       console.log(`Notification job created: ${job.id}`);
+
+      // On the job completion, log to the console Notification job JOB_ID completed.
+      job.on('complete', () => {
+        console.log(`Notification job ${job.id} completed`);
+      });
+
+      // On the job failure, log to the console Notification job JOB_ID failed: ERROR
+      job.on('failed', (err) => {
+        console.log(`Notification job ${job.id} failed: ${err}`);
+      });
+
+      // On the job progress, log to the console Notification job JOB_ID PERCENTAGE% complete
+      job.on('progress', (progress) => {
+        console.log(`Notification job ${job.id} ${progress}% complete`);
+      });
     }
   });
-});
-
-// On the job completion, log to the console Notification job JOB_ID completed
-queue.on('complete', (id) => {
-  kue.Job.get(id, (err, job) => {
-    if (!err) {
-      console.log(`Notification job ${job.id} completed`);
-    }
-  });
-});
-
-// On the job failure, log to the console Notification job JOB_ID failed: ERROR
-queue.on('failed', (id, err) => {
-  console.log(`Notification job ${id} failed: ${err}`);
-});
-
-// On the job progress, log to the console Notification job JOB_ID PERCENTAGE% complete
-queue.on('progress', (id, progress) => {
-  console.log(`Notification job ${id} ${progress}% complete`);
 });
